@@ -1,0 +1,21 @@
+# Dependency directory
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Optional: VSCode settings (if using VSCode)
+.vscode/
+
+# Optional: production build folder
+dist/
+build/

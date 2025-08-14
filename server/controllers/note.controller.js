@@ -100,7 +100,7 @@ export const updateNote = async (req, res, next) => {
       });
     }
 
-    // Check if another category with the same name exists (excluding current)
+    // Check if another note with the same title exists (excluding current)
     const checkExistingTitle = await Note.findOne({ title, _id: { $ne: id } });
 
     if (checkExistingTitle) {

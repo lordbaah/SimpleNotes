@@ -57,7 +57,7 @@ export const getNotes = async (req, res, next) => {
     const notes = await Note.find().sort({ createdAt: -1 });
     res
       .status(200)
-      .json({ message: 'Notes Retrieved Successfully', data: notes });
+      .json({ message: 'Notes Retrieved Successfully', notes: notes });
   } catch (error) {
     next(error);
   }
@@ -80,7 +80,7 @@ export const getNoteById = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: note,
+      note: note,
     });
   } catch (error) {
     next(error);

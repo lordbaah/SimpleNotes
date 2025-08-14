@@ -2,6 +2,7 @@ import express from 'express';
 import noteRouter from './routes/note.route.js';
 import dotenv from 'dotenv';
 import connectDB from './config/mongodb.js';
+import errorHandler from './middlewares/error.middleware.js';
 
 dotenv.config();
 
@@ -19,6 +20,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/v1', noteRouter);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

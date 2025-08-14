@@ -1,12 +1,15 @@
 import express from 'express';
 import noteRouter from './routes/note.route.js';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import connectDB from './config/mongodb.js';
 import errorHandler from './middlewares/error.middleware.js';
 
 dotenv.config();
 
 const app = express();
+
+app.use(cors());
 
 const PORT = process.env.PORT || 5000;
 

@@ -16,7 +16,7 @@ const NoteList = () => {
   if (error) return 'An error has occurred: ' + error.message;
 
   return (
-    <div>
+    <div className="grid grid-cols-3 gap-4">
       {notes?.map((note) => (
         <NoteCard key={note._id} note={note} />
       ))}

@@ -19,4 +19,11 @@ export interface updateNote {
 export interface getNotesResponse {
   message: string;
   notes: Note[];
+  success: boolean;
+}
+
+export interface createNoteResponse {
+  message: string;
+  data: Note[];
+  success: boolean;
 }

@@ -3,11 +3,11 @@ import { z } from 'zod';
 export const NoteFormSchema = z.object({
   title: z
     .string()
-    .min(5, 'Title is too short')
+    .min(3, 'Title is too short')
     .max(100, 'Title must be at most 100 characters long'),
   body: z
     .string()
-    .min(1, 'Body is required')
+    .min(10, 'Body is required')
     .max(1000, 'Body must be at most 1000 characters long'),
 });
 

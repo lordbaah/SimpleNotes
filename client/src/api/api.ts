@@ -1,17 +1,24 @@
 import axiosInstance from './axiosInstance';
-import type { getNotesResponse, createNote } from '../types/notes';
+import type {
+  getNotesResponse,
+  createNote,
+  createNoteResponse,
+} from '../types/notes';
 
 export const fetchNotes = async (): Promise<getNotesResponse> => {
   try {
     const response = await axiosInstance.get('/notes');
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
+    const errorMessage = error?.message;
     console.log(error);
-    throw new Error('Failed to fetch notes');
+    throw new Error(errorMessage);
   }
 };
 
-export const createNewNote = async (noteData: createNote): Promise<void> => {
+export const createNewNote = async (
+  noteData: createNote
+): Promise<createNoteResponse> => {
   try {
     const response = await axiosInstance.post('/notes', noteData);
     console.log('Note created successfully:', response.data);

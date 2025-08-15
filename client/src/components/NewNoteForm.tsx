@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { createNewNote } from '../api/api';
 import { NoteFormSchema, type NoteFormData } from '../schema/noteSchema';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 
 const NewNoteForm = () => {
   const {
@@ -15,8 +16,8 @@ const NewNoteForm = () => {
 
   const {
     mutate: createNote,
-    isPending,
     isSuccess,
+    isPending,
     isError,
     error,
     data,
@@ -24,18 +25,23 @@ const NewNoteForm = () => {
     mutationFn: createNewNote,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
-      console.log('Note created:', data);
+      // console.log('Note created:', data);
+      // toast.success(data.message);
     },
   });
-
-  console.log(isPending);
-  console.log(isSuccess);
-  console.log(error);
-  console.log(data?.message);
 
   const onSubmit = async (data: NoteFormData) => {
     createNote(data);
   };
+
+  if (isError) {
+    console.log(error);
+    toast.error(error.message);
+  }
+
+  if (isSuccess) {
+    toast.success(data.message);
+  }
 
   return (
     <div className="w-full">

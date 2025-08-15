@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { fetchNoteById } from '../api/api';
+import { fetchNoteById, updateNoteById } from '../api/api';
+import type { updateNoteData } from '../types/notes';
 import { NoteFormSchema, type NoteFormData } from '../schema/noteSchema';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 
 const ViewNote = ({ id }: { id: string }) => {
   const [isEditing, setIsEditing] = useState(false);
+
+  const queryClient = useQueryClient();
 
   //fetch note by id
   const { data: note, isLoading } = useQuery({
@@ -18,6 +21,7 @@ const ViewNote = ({ id }: { id: string }) => {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<NoteFormData>({
     resolver: zodResolver(NoteFormSchema),
@@ -33,6 +37,45 @@ const ViewNote = ({ id }: { id: string }) => {
       });
     }
   }, [note, reset]);
+
+  const {
+    mutate: updateNote,
+    isPending,
+    isSuccess,
+    isError,
+    error,
+  } = useMutation({
+    // mutationKey: ['updateNote', id],
+    mutationFn: (data: updateNoteData) => updateNoteById(id, data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+      queryClient.invalidateQueries({ queryKey: ['note', id] });
+      console.log('Note updated:', data);
+    },
+  });
+
+  const handleNoteUpdate = async (data: NoteFormData) => {
+    updateNote(data);
+    setIsEditing(false);
+    console.log(`Updating note ${id} with data:`, data);
+  };
+
+  const onChange = async (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const currentTitle = watch('title');
+    const currentBody = watch('body');
+
+    console.log({
+      title: currentTitle,
+      body: currentBody,
+    });
+    console.log(e.target.value);
+    updateNote({
+      title: currentTitle,
+      body: currentBody,
+    });
+  };
 
   if (isLoading) return <p>Loading...</p>;
 
@@ -51,7 +94,7 @@ const ViewNote = ({ id }: { id: string }) => {
       </div>
 
       <div className="w-full">
-        <form>
+        <form onSubmit={handleSubmit(handleNoteUpdate)}>
           <div>
             <label
               htmlFor="title"
@@ -63,7 +106,7 @@ const ViewNote = ({ id }: { id: string }) => {
               className="w-full px-0 py-4 text-xl font-medium bg-transparent border-0 border-b-2 border-gray-200 focus:outline-none focus:border-gray-900 placeholder-gray-400 transition-colors"
               placeholder="Note title"
               disabled={!isEditing}
-              {...register('title', {})}
+              {...register('title', { onChange: onChange })}
             />
             <p className="text-red-500">{errors.title?.message}</p>
           </div>
@@ -80,7 +123,7 @@ const ViewNote = ({ id }: { id: string }) => {
               placeholder="Start writing..."
               disabled={!isEditing}
               className="w-full px-0 py-4 text-base bg-transparent border-0 focus:outline-none placeholder-gray-400 resize-none leading-relaxed"
-              {...register('body', {})}
+              {...register('body', { onChange: onChange })}
             />
             <p className="text-red-500">{errors.body?.message}</p>
           </div>

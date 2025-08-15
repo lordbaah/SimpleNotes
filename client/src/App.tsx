@@ -1,5 +1,6 @@
 import Header from './components/Header';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import Home from './pages/Home';
 import NewNote from './pages/NewNote';
 import ViewNotePage from './pages/ViewNotePage';
@@ -7,6 +8,7 @@ import ViewNotePage from './pages/ViewNotePage';
 function App() {
   return (
     <>
+      <ToastContainer />
       <Router>
         <Header />
         <Routes>

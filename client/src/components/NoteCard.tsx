@@ -1,9 +1,25 @@
 import type { Note } from '../types/notes';
 import { formatDateTime } from '../utils/formatDate';
 import { Link } from 'react-router-dom';
+import { deleteNoteById } from '../api/api';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 
 const NoteCard = ({ note }: { note: Note }) => {
   // let formattedDate = formatDateTime(note.createdAt);
+
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteNote } = useMutation({
+    mutationFn: (id: string) => deleteNoteById(id),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+      console.log('Note deleted successfully:', data.message);
+    },
+  });
+
+  const handleDelete = async (id: string) => {
+    deleteNote(id);
+  };
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 border-0">
@@ -20,6 +36,12 @@ const NoteCard = ({ note }: { note: Note }) => {
       <Link to={`/notes/${note._id}`} className="text-blue-500 hover:underline">
         View Note
       </Link>
+      <button
+        className="px-8 py-3 bg-gray-900 text-white font-medium rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all duration-200"
+        onClick={() => handleDelete(note._id)}
+      >
+        Delete Note
+      </button>
     </div>
   );
 };

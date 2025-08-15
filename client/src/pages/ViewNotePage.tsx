@@ -4,6 +4,10 @@ import ViewNote from '../components/ViewNote';
 const ViewNotePage = () => {
   const { id } = useParams();
 
+  if (!id) {
+    return <div>Error: Note ID not found in URL.</div>;
+  }
+
   return (
     <div>
       ViewNote {id}

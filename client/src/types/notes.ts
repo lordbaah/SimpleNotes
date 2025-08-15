@@ -27,3 +27,9 @@ export interface createNoteResponse {
   data: Note[];
   success: boolean;
 }
+
+export interface fetchNoteByIdResponse {
+  // message: string;
+  note: Note;
+  success: boolean;
+}

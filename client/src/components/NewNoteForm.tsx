@@ -8,30 +8,32 @@ const NewNoteForm = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm<NoteFormData>({ resolver: zodResolver(NoteFormSchema) });
+  } = useForm<NoteFormData>({
+    resolver: zodResolver(NoteFormSchema),
+    defaultValues: { title: '', body: '' },
+  });
 
   const {
     mutate: createNote,
-    isSuccess,
     isPending,
     isError,
     error,
-    data,
+    isSuccess,
   } = useCreateNote();
 
   const onSubmit = async (data: NoteFormData) => {
-    createNote(data);
+    createNote(data, {
+      onSuccess: () => {
+        reset(); // ✅ reset form fields only on success
+        toast.success('Note created successfully!');
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
   };
-
-  if (isError) {
-    console.log(error);
-    toast.error(error.message);
-  }
-
-  if (isSuccess) {
-    toast.success(data.message);
-  }
 
   return (
     <div className="w-full">
@@ -44,7 +46,7 @@ const NewNoteForm = () => {
             Title
           </label>
           <input
-            className="w-full px-0 py-4 text-xl font-medium bg-transparent border-0 border-b-2 border-gray-200 focus:outline-none focus:border-gray-900 placeholder-gray-400 transition-colors"
+            className="w-full px-0 py-4 text-xl font-medium bg-transparent border-0 border-b-2 border-gray-200 focus:outline-none focus:border-blue-500 placeholder-gray-400 transition-colors"
             placeholder="Note title"
             {...register('title', {})}
           />
@@ -67,11 +69,8 @@ const NewNoteForm = () => {
           <p className="text-red-500">{errors.body?.message}</p>
         </div>
 
-        <button
-          type="submit"
-          className="px-8 py-3 bg-gray-900 text-white font-medium rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all duration-200"
-        >
-          Save Note
+        <button type="submit" className="btn-primary">
+          {isPending ? 'Adding...' : 'Add Note'}
         </button>
       </form>
     </div>

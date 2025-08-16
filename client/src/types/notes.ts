@@ -29,7 +29,7 @@ export interface createNoteResponse {
 }
 
 export interface updateNoteResponse {
-  // message: string;
+  message: string;
   data: Note[];
   success: boolean;
 }

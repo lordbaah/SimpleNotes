@@ -15,7 +15,7 @@ export const fetchNotes = async (): Promise<getNotesResponse> => {
     return response.data;
   } catch (error: any) {
     const errorMessage = error?.message;
-    console.log(error);
+    // console.log(error);
     throw new Error(errorMessage);
   }
 };
@@ -25,12 +25,12 @@ export const createNewNote = async (
 ): Promise<createNoteResponse> => {
   try {
     const response = await axiosInstance.post('/notes', noteData);
-    console.log('Note created successfully:', response.data);
+    // console.log('Note created successfully:', response.data);
     return response.data;
   } catch (error: any) {
     const errorMessage =
       error?.response?.data?.message || 'An unknown error occurred';
-    console.log(errorMessage);
+    // console.log(errorMessage);
     throw new Error(errorMessage);
   }
 };
@@ -44,7 +44,7 @@ export const fetchNoteById = async (
   } catch (error: any) {
     const errorMessage =
       error?.response?.data?.message || 'An unknown error occurred';
-    console.log(errorMessage);
+    // console.log(errorMessage);
     throw new Error(errorMessage);
   }
 };
@@ -55,12 +55,12 @@ export const updateNoteById = async (
 ): Promise<updateNoteResponse> => {
   try {
     const response = await axiosInstance.put(`/notes/${id}`, noteData);
-    console.log('Note updated successfully:', response.data);
+    // console.log('Note updated successfully:', response.data);
     return response.data;
   } catch (error: any) {
     const errorMessage =
       error?.response?.data?.message || 'An unknown error occurred';
-    console.log(errorMessage);
+    // console.log(errorMessage);
     throw new Error(errorMessage);
   }
 };
@@ -74,7 +74,7 @@ export const deleteNoteById = async (
   } catch (error: any) {
     const errorMessage =
       error?.response?.data?.message || 'An unknown error occurred';
-    console.log(errorMessage);
+    // console.log(errorMessage);
     throw new Error(errorMessage);
   }
 };

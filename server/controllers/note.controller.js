@@ -23,7 +23,7 @@ export const createNote = async (req, res, next) => {
     //validate with joi
     const { error, value } = noteScheme.validate(req.body);
 
-    console.log(value);
+    // console.log(value);
 
     if (error) {
       res.status(400).json({
@@ -68,7 +68,7 @@ export const getNoteById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    console.log(id);
+    // console.log(id);
 
     const note = await Note.findById(id);
 

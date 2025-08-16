@@ -2,14 +2,15 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createNewNote, updateNoteById, deleteNoteById } from '../../api/api';
 import type { updateNoteData } from '../../types/notes';
+import { toast } from 'react-toastify';
 
 export const useCreateNote = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createNewNote,
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
-      console.log('Note created:', data);
+      // console.log('Note created:', data);
       // toast.success(data.message);
     },
   });
@@ -20,10 +21,10 @@ export const useUpdateNote = (id: string) => {
   return useMutation({
     mutationKey: ['updateNote', id],
     mutationFn: (data: updateNoteData) => updateNoteById(id, data),
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
       queryClient.invalidateQueries({ queryKey: ['note', id] });
-      console.log('Note updated:', data);
+      // console.log('Note updated:', data);
     },
   });
 };
@@ -34,7 +35,8 @@ export const useDeleteNote = () => {
     mutationFn: (id: string) => deleteNoteById(id),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
-      console.log('Note deleted successfully:', data.message);
+      // console.log('Note deleted successfully:', data.message);
+      toast.success(data.message);
     },
   });
 };

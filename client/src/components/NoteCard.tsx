@@ -4,39 +4,52 @@ import { formatDateTime } from '../utils/formatDate';
 import { Link } from 'react-router-dom';
 import { useDeleteNote } from '../hooks/mutations/useNotes';
 import DeleteModal from './DeleteModal';
+import { Trash2, ChevronRight } from 'lucide-react';
 
 const NoteCard = ({ note }: { note: Note }) => {
   const { mutate: deleteNote } = useDeleteNote();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleDelete = async (id: string) => {
-    // deleteNote(id);
+    deleteNote(id);
     setShowDeleteConfirm(false);
-    alert(`Note with ID ${id} deleted successfully!`);
+    console.log(`Note with ID ${id} deleted successfully!`);
   };
 
   return (
     <>
-      <div className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 border-0">
-        <h2 className="text-xl font-medium text-gray-900 mb-3 line-clamp-2">
-          {note.title}
-        </h2>
-        <div className="flex justify-between text-sm text-gray-400">
-          <span>Created: {formatDateTime(note.createdAt)}</span>
-          <span>Updated: {formatDateTime(note.updatedAt)}</span>
+      <div className="bg-white p-4 rounded-xl border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
+        <div className="flex flex-col gap-2 mb-4">
+          <h2 className="font-semibold text-xl">{note.title}</h2>
+          <p>{note.body.slice(0, 20)}.....</p>
         </div>
-        <Link
-          to={`/notes/${note._id}`}
-          className="text-blue-500 hover:underline"
-        >
-          View Note
-        </Link>
-        <button
-          className="px-8 py-3 bg-gray-900 text-white font-medium rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all duration-200"
-          onClick={() => setShowDeleteConfirm(true)}
-        >
-          Delete Note
-        </button>
+
+        <div className="flex flex-col gap-2">
+          <p className="text-sm">
+            Created On: {formatDateTime(note.createdAt)}
+          </p>
+          <p className="text-sm">
+            Updated On: {formatDateTime(note.updatedAt)}
+          </p>
+        </div>
+
+        <div className="mt-4 flex justify-between items-center">
+          <Link
+            to={`/notes/${note._id}`}
+            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors group/link"
+          >
+            <span>View Note</span>
+            <ChevronRight className="icon-size" />
+          </Link>
+
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            className="btn-delete"
+          >
+            <Trash2 className="icon-size" />
+            Delete
+          </button>
+        </div>
       </div>
 
       {showDeleteConfirm && (

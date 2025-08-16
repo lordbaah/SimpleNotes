@@ -1,9 +1,8 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createNewNote } from '../api/api';
 import { NoteFormSchema, type NoteFormData } from '../schema/noteSchema';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import { useCreateNote } from '../hooks/mutations/useNotes';
 
 const NewNoteForm = () => {
   const {
@@ -12,8 +11,6 @@ const NewNoteForm = () => {
     formState: { errors },
   } = useForm<NoteFormData>({ resolver: zodResolver(NoteFormSchema) });
 
-  const queryClient = useQueryClient();
-
   const {
     mutate: createNote,
     isSuccess,
@@ -21,14 +18,7 @@ const NewNoteForm = () => {
     isError,
     error,
     data,
-  } = useMutation({
-    mutationFn: createNewNote,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
-      // console.log('Note created:', data);
-      // toast.success(data.message);
-    },
-  });
+  } = useCreateNote();
 
   const onSubmit = async (data: NoteFormData) => {
     createNote(data);

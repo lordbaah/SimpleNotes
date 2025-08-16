@@ -1,21 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { fetchNoteById, updateNoteById } from '../api/api';
-import type { updateNoteData } from '../types/notes';
 import { NoteFormSchema, type NoteFormData } from '../schema/noteSchema';
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { useNote } from '../hooks/queries/useNotes';
+import { useUpdateNote } from '../hooks/mutations/useNotes';
+import { useDebounce } from '../hooks/useDebounce';
+import { formatDateTime } from '../utils/formatDate';
 
-const ViewNote = ({ id }: { id: string }) => {
+const ViewNote = ({ NoteId }: { NoteId: string }) => {
   const [isEditing, setIsEditing] = useState(false);
 
-  const queryClient = useQueryClient();
-
   //fetch note by id
-  const { data: note, isLoading } = useQuery({
-    queryKey: ['note', id],
-    queryFn: () => fetchNoteById(id),
-  });
+  const { data: note, isLoading } = useNote(NoteId);
+
+  const { mutate: updateNote, isPending } = useUpdateNote(NoteId);
 
   const {
     register,
@@ -28,6 +26,32 @@ const ViewNote = ({ id }: { id: string }) => {
     defaultValues: { title: '', body: '' },
   });
 
+  // Watch and debounce form values
+  const watchedTitle = watch('title');
+  const watchedBody = watch('body');
+  const debouncedFormData = useDebounce({
+    title: watchedTitle,
+    body: watchedBody,
+  });
+
+  // Auto-save effect
+  useEffect(() => {
+    if (
+      isEditing &&
+      note?.note &&
+      debouncedFormData.title &&
+      debouncedFormData.body &&
+      (debouncedFormData.title !== note.note.title ||
+        debouncedFormData.body !== note.note.body)
+    ) {
+      updateNote({
+        title: debouncedFormData.title,
+        body: debouncedFormData.body,
+      });
+      console.log('Auto-saving:', debouncedFormData);
+    }
+  }, [debouncedFormData, isEditing, note?.note, updateNote]);
+
   // Reset form values when note data is loaded
   useEffect(() => {
     if (note?.note) {
@@ -38,43 +62,10 @@ const ViewNote = ({ id }: { id: string }) => {
     }
   }, [note, reset]);
 
-  const {
-    mutate: updateNote,
-    isPending,
-    isSuccess,
-    isError,
-    error,
-  } = useMutation({
-    // mutationKey: ['updateNote', id],
-    mutationFn: (data: updateNoteData) => updateNoteById(id, data),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
-      queryClient.invalidateQueries({ queryKey: ['note', id] });
-      console.log('Note updated:', data);
-    },
-  });
-
   const handleNoteUpdate = async (data: NoteFormData) => {
     updateNote(data);
     setIsEditing(false);
-    console.log(`Updating note ${id} with data:`, data);
-  };
-
-  const onChange = async (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const currentTitle = watch('title');
-    const currentBody = watch('body');
-
-    console.log({
-      title: currentTitle,
-      body: currentBody,
-    });
-    console.log(e.target.value);
-    updateNote({
-      title: currentTitle,
-      body: currentBody,
-    });
+    console.log(`Updating note ${NoteId} with data:`, data);
   };
 
   if (isLoading) return <p>Loading...</p>;
@@ -82,9 +73,18 @@ const ViewNote = ({ id }: { id: string }) => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-light text-gray-900">
+        <div>
+          <h1 className="text-3xl font-semibold text-gray-900 mb-1">
+            {isEditing ? 'Edit Note' : note?.note?.title || 'Untitled Note'}
+          </h1>
+          {!isEditing && (
+            <p className="text-sm text-gray-500">Last updated {}</p>
+          )}
+        </div>
+
+        {/* <h1 className="text-3xl font-light text-gray-900">
           {isEditing ? 'Edit Note' : 'View Note'}
-        </h1>
+        </h1> */}
         <button
           onClick={() => setIsEditing(!isEditing)}
           className="px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800 transition-colors"
@@ -95,46 +95,77 @@ const ViewNote = ({ id }: { id: string }) => {
 
       <div className="w-full">
         <form onSubmit={handleSubmit(handleNoteUpdate)}>
-          <div>
+          <div className="space-y-2">
             <label
               htmlFor="title"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-semibold text-gray-700"
             >
               Title
             </label>
             <input
-              className="w-full px-0 py-4 text-xl font-medium bg-transparent border-0 border-b-2 border-gray-200 focus:outline-none focus:border-gray-900 placeholder-gray-400 transition-colors"
-              placeholder="Note title"
+              id="title"
+              className={`w-full px-0 py-4 text-2xl font-semibold bg-transparent border-0 border-b-2 transition-all duration-200 placeholder-gray-400 ${
+                isEditing
+                  ? 'border-gray-200 focus:outline-none focus:border-blue-500 text-gray-900'
+                  : 'border-transparent text-gray-800 cursor-default'
+              }`}
+              placeholder="Enter note title..."
               disabled={!isEditing}
-              {...register('title', { onChange: onChange })}
+              {...register('title')}
             />
-            <p className="text-red-500">{errors.title?.message}</p>
+            {errors.title && (
+              <p className="text-red-500 text-sm font-medium flex items-center gap-1 mt-2">
+                <span className="w-4 h-4 rounded-full bg-red-100 flex items-center justify-center text-xs">
+                  !
+                </span>
+                {errors.title.message}
+              </p>
+            )}
           </div>
 
-          <div>
+          <div className="space-y-2">
             <label
               htmlFor="body"
-              className="block text-sm font-medium text-gray-700 mb-2 mt-2"
+              className="block text-sm font-semibold text-gray-700"
             >
-              Body
+              Content
             </label>
             <textarea
-              rows={8}
-              placeholder="Start writing..."
+              id="body"
+              rows={6}
+              placeholder="Start writing your note..."
               disabled={!isEditing}
-              className="w-full px-0 py-4 text-base bg-transparent border-0 focus:outline-none placeholder-gray-400 resize-none leading-relaxed"
-              {...register('body', { onChange: onChange })}
+              className={`w-full px-0 py-4 text-base bg-transparent border-0 resize-none leading-relaxed transition-all duration-200 placeholder-gray-400 ${
+                isEditing
+                  ? 'focus:outline-none text-gray-900'
+                  : 'text-gray-700 cursor-default'
+              }`}
+              {...register('body')}
             />
-            <p className="text-red-500">{errors.body?.message}</p>
+            {errors.body && (
+              <p className="text-red-500 text-sm font-medium flex items-center gap-1 mt-2">
+                <span className="w-4 h-4 rounded-full bg-red-100 flex items-center justify-center text-xs">
+                  !
+                </span>
+                {errors.body.message}
+              </p>
+            )}
           </div>
 
           {isEditing && (
-            <button
-              type="submit"
-              className="px-8 py-3 bg-gray-900 text-white font-medium rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all duration-200"
-            >
-              Save Note
-            </button>
+            <div className="flex items-center justify-between pt-6 border-t border-gray-100">
+              <div className="text-sm text-gray-500">
+                Changes are automatically saved as you type
+              </div>
+              <button
+                type="submit"
+                disabled={isPending}
+                className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
+              >
+                {/* <Save className="w-4 h-4" /> */}
+                {isPending ? 'Saving...' : 'Save Note'}
+              </button>
+            </div>
           )}
         </form>
       </div>

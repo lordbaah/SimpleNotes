@@ -11,11 +11,13 @@ function App() {
       <ToastContainer />
       <Router>
         <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/notes/new" element={<NewNote />} />
-          <Route path="/notes/:id" element={<ViewNotePage />} />
-        </Routes>
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/notes/new" element={<NewNote />} />
+            <Route path="/notes/:noteId" element={<ViewNotePage />} />
+          </Routes>
+        </main>
       </Router>
     </>
   );

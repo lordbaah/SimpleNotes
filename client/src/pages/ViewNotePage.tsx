@@ -2,17 +2,19 @@ import { useParams } from 'react-router-dom';
 import ViewNote from '../components/ViewNote';
 
 const ViewNotePage = () => {
-  const { id } = useParams();
+  const { noteId } = useParams();
+  // console.log(useParams());
 
-  if (!id) {
+  if (!noteId) {
     return <div>Error: Note ID not found in URL.</div>;
   }
 
   return (
-    <div>
-      ViewNote {id}
-      <ViewNote id={id} />
-    </div>
+    <section>
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <ViewNote NoteId={noteId} />
+      </div>
+    </section>
   );
 };
 

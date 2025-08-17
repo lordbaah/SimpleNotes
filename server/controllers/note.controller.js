@@ -2,7 +2,7 @@ import Note from '../models/note.model.js';
 import joi from 'joi';
 
 const noteScheme = joi.object({
-  title: joi.string().min(3).max(100).required().messages({
+  title: joi.string().min(3).max(50).required().messages({
     'string.base': 'Title must be a string',
     'string.empty': 'Title is required',
     'string.min': 'Title must be at least 3 characters long',

@@ -8,7 +8,7 @@ const DeleteModal = ({ onConfirm, onCancel, title }: DeleteModalProps) => {
   return (
     <div className="fixed inset-0 z-50 grid place-content-center bg-black/50 p-4">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-        <h2>Are you sure you want to delete Note with tille: {title}?</h2>
+        <p>Are you sure you want to delete Note with title: {title}?</p>
 
         <footer className="mt-6 flex justify-end gap-2">
           <button

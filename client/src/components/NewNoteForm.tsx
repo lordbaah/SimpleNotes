@@ -15,13 +15,7 @@ const NewNoteForm = () => {
     defaultValues: { title: '', body: '' },
   });
 
-  const {
-    mutate: createNote,
-    isPending,
-    isError,
-    error,
-    isSuccess,
-  } = useCreateNote();
+  const { mutate: createNote, isPending } = useCreateNote();
 
   const onSubmit = async (data: NoteFormData) => {
     createNote(data, {

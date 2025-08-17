@@ -167,7 +167,7 @@ const ViewAndEditNote = ({ NoteId }: { NoteId: string }) => {
               htmlFor="body"
               className="block text-sm font-semibold text-gray-700"
             >
-              Content
+              Body
             </label>
             <textarea
               id="body"

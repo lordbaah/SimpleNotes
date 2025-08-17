@@ -9,7 +9,7 @@ const noteSchema = new Schema(
       unique: true,
       trim: true,
       minLength: 3,
-      maxLength: 100,
+      maxLength: 50,
     },
     body: {
       type: String,

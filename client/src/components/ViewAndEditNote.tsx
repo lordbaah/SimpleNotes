@@ -8,12 +8,19 @@ import { useDebounce } from '../hooks/useDebounce';
 import { formatDateTime } from '../utils/formatDate';
 import { Save, X, Edit3 } from 'lucide-react';
 import { toast } from 'react-toastify';
+import LoadingState from './LoadingState';
+import ErrorState from './ErrorState';
 
 const ViewAndEditNote = ({ NoteId }: { NoteId: string }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   // Fetch the note data
-  const { data: note, isLoading } = useNote(NoteId);
+  const {
+    data: note,
+    isLoading,
+    isError: isFetchNoteError,
+    error: fetchNoteError,
+  } = useNote(NoteId);
   const {
     mutate: updateNote,
     isPending,
@@ -59,7 +66,7 @@ const ViewAndEditNote = ({ NoteId }: { NoteId: string }) => {
         title: note.note.title,
         body: debouncedBody,
       });
-      console.log('Auto-saving body:', debouncedBody);
+      // console.log('Auto-saving body:', debouncedBody);
     }
   }, [debouncedBody, isEditing, isPending, note?.note, updateNote]);
 
@@ -69,7 +76,7 @@ const ViewAndEditNote = ({ NoteId }: { NoteId: string }) => {
         setIsEditing(false);
         setIsEditingTitle(false);
         toast.success(data.message);
-        console.log(`Updating note ${NoteId} with data:`, data);
+        // console.log(`Updating note ${NoteId} with data:`, data);
       },
       onError: (error) => {
         console.log(error.message);
@@ -81,17 +88,20 @@ const ViewAndEditNote = ({ NoteId }: { NoteId: string }) => {
     // setIsEditing(false);
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <LoadingState message="Loading note..." />;
+  if (isFetchNoteError) {
+    return <ErrorState error={fetchNoteError} />;
+  }
 
   return (
     <div>
       <div className="flex flex-col gap-6 justify-between items-start md:flex-row mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+        <div className="flex flex-col gap-3">
+          <h1 className="font-bold text-2xl text-gray-900 line-clamp-2">
             {isEditing ? 'Edit Note' : note?.note?.title}
           </h1>
           {!isEditing && (
-            <div>
+            <div className="flex flex-col gap-2">
               <p className="text-sm text-gray-500">
                 Created On:{' '}
                 {note?.note?.createdAt
@@ -185,7 +195,7 @@ const ViewAndEditNote = ({ NoteId }: { NoteId: string }) => {
           </div>
 
           {isEditing && (
-            <div className="flex items-center justify-between pt-6 border-t border-gray-100">
+            <div className="flex flex-col gap-2 items-center justify-between pt-6 border-t border-gray-100">
               <p className="text-sm text-gray-500">
                 Changes are automatically saved as you type Auto-save enabled{' '}
                 {isPending && '• Saving...'}

@@ -22,6 +22,7 @@ const ViewNotePage = () => {
         <div className="mb-4">
           <button onClick={() => navigate(-1)} className="btn-primary">
             <ChevronLeft className="icon-size" />
+            Go Back
           </button>
         </div>
         <ViewAndEditNote NoteId={noteId} />

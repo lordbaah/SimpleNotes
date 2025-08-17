@@ -6,11 +6,18 @@ interface DeleteModalProps {
 
 const DeleteModal = ({ onConfirm, onCancel, title }: DeleteModalProps) => {
   return (
-    <div className="fixed inset-0 z-50 grid place-content-center bg-black/50 p-4">
+    <div className="fixed inset-0 z-50 grid place-content-center bg-black/50 backdrop-blur-xs p-4">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-        <p>Are you sure you want to delete Note with title: {title}?</p>
+        <h3 className="text-xl font-semibold mb-3 text-gray-900">
+          Delete Note
+        </h3>
+        <p className="text-gray-600 mb-6 leading-relaxed">
+          Are you sure you want to delete "
+          <span className="font-medium text-gray-900">{title}</span>"? This
+          action cannot be undone.
+        </p>
 
-        <footer className="mt-6 flex justify-end gap-2">
+        <div className="mt-6 flex justify-end gap-2">
           <button
             onClick={onCancel}
             type="button"
@@ -22,7 +29,7 @@ const DeleteModal = ({ onConfirm, onCancel, title }: DeleteModalProps) => {
           <button onClick={onConfirm} type="button" className="btn-delete">
             Delete
           </button>
-        </footer>
+        </div>
       </div>
     </div>
   );

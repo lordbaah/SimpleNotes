@@ -13,24 +13,27 @@ const NoteCard = ({ note }: { note: Note }) => {
   const handleDelete = async (id: string) => {
     deleteNote(id);
     setShowDeleteConfirm(false);
-    console.log(`Note with ID ${id} deleted successfully!`);
+    // console.log(`Note with ID ${id} deleted successfully!`);
   };
 
   return (
     <>
-      <div className="bg-white p-4 rounded-xl border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
-        <div className="flex flex-col gap-2 mb-4">
-          <h2 className="font-semibold text-xl">{note.title}</h2>
-          <p>{note.body.slice(0, 20)}.....</p>
+      <div className="card">
+        <div className="flex flex-col gap-3 mb-5">
+          <h2 className="font-bold text-xl text-gray-900 line-clamp-2">
+            {note.title}
+          </h2>
+          <p className="text-gray-600 text-sm line-clamp-3">
+            {/* {note.body.slice(0, 50)}..... */}
+            {note.body
+              ? `${note.body.slice(0, 70)}${note.body.length > 70 ? '...' : ''}`
+              : 'No content available'}
+          </p>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <p className="text-sm">
-            Created On: {formatDateTime(note.createdAt)}
-          </p>
-          <p className="text-sm">
-            Updated On: {formatDateTime(note.updatedAt)}
-          </p>
+        <div className="flex flex-col gap-1.5 mb-5  text-gray-500 bg-gray-50/50 rounded-lg p-3 border border-gray-100">
+          <p className="text-xs">Created: {formatDateTime(note.createdAt)}</p>
+          <p className="text-xs">Updated: {formatDateTime(note.updatedAt)}</p>
         </div>
 
         <div className="mt-4 flex justify-between items-center">

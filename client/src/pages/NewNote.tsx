@@ -10,9 +10,12 @@ const NewNote = () => {
         <div className="mb-4">
           <button onClick={() => navigate(-1)} className="btn-primary">
             <ChevronLeft className="icon-size" />
+            Go Back
           </button>
         </div>
-        <h1 className="text-xl mb-8">Create New Note</h1>
+        <h1 className="font-bold text-2xl text-gray-900 line-clamp-2 mb-8">
+          Create New Note
+        </h1>
         <NewNoteForm />
       </div>
     </section>

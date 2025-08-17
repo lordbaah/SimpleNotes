@@ -39,7 +39,7 @@ const NoteCard = ({ note }: { note: Note }) => {
         <div className="mt-4 flex justify-between items-center">
           <Link
             to={`/notes/${note._id}`}
-            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors group/link"
+            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
           >
             <span>View Note</span>
             <ChevronRight className="icon-size" />

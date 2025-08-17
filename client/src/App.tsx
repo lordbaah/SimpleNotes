@@ -3,6 +3,7 @@ import { ToastContainer } from 'react-toastify';
 import Home from './pages/Home';
 import NewNote from './pages/NewNote';
 import ViewNotePage from './pages/ViewNotePage';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/notes/new" element={<NewNote />} />
             <Route path="/notes/:noteId" element={<ViewNotePage />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
       </Router>

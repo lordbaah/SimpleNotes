@@ -9,11 +9,18 @@ const NewNoteForm = () => {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<NoteFormData>({
     resolver: zodResolver(NoteFormSchema),
     defaultValues: { title: '', body: '' },
   });
+
+  const titleValue = watch('title') || '';
+  const bodyValue = watch('body') || '';
+
+  const bodyMaxLength = 1000;
+  const titleMaxLength = 50;
 
   const { mutate: createNote, isPending } = useCreateNote();
 
@@ -45,6 +52,9 @@ const NewNoteForm = () => {
             {...register('title', {})}
           />
           <p className="text-red-500">{errors.title?.message}</p>
+          <span className="text-xs text-gray-400">
+            {titleValue.length} / {titleMaxLength}
+          </span>
         </div>
 
         <div>
@@ -59,8 +69,12 @@ const NewNoteForm = () => {
             placeholder="Start writing..."
             className="w-full px-0 py-4 text-base bg-transparent border-0 focus:outline-none placeholder-gray-400 resize-none leading-relaxed"
             {...register('body', {})}
+            maxLength={bodyMaxLength}
           />
           <p className="text-red-500">{errors.body?.message}</p>
+          <span className="text-xs text-gray-400">
+            {bodyValue.length} / {bodyMaxLength}
+          </span>
         </div>
 
         <button type="submit" className="btn-primary">

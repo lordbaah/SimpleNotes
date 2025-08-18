@@ -14,6 +14,10 @@ import ErrorState from './ErrorState';
 const ViewAndEditNote = ({ NoteId }: { NoteId: string }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+
+  const bodyMaxLength = 1000;
+  const titleMaxLength = 50;
+
   // Fetch the note data
   const {
     data: note,
@@ -51,6 +55,7 @@ const ViewAndEditNote = ({ NoteId }: { NoteId: string }) => {
 
   // Watch and debounce form values
   const watchedBody = watch('body');
+  const titleValue = watch('title') || '';
   const debouncedBody = useDebounce(watchedBody, 1000);
 
   // Auto-save effect for the body only
@@ -165,11 +170,12 @@ const ViewAndEditNote = ({ NoteId }: { NoteId: string }) => {
               disabled={!isEditingTitle}
               {...register('title')}
             />
-            {errors.title && (
-              <p className="text-red-500 text-sm font-medium flex items-center gap-1 mt-2">
-                {errors.title.message}
-              </p>
-            )}
+            <p className="text-red-500 text-sm font-medium flex items-center gap-1 mt-2">
+              {errors.title?.message}
+            </p>
+            <span className="text-xs text-gray-400">
+              {titleValue.length} / {titleMaxLength}
+            </span>
           </div>
 
           <div className="">
@@ -187,11 +193,12 @@ const ViewAndEditNote = ({ NoteId }: { NoteId: string }) => {
               className="w-full px-0 py-4 text-base bg-transparent border-0 focus:outline-none placeholder-gray-400 resize-none leading-relaxed"
               {...register('body')}
             />
-            {errors.body && (
-              <p className="text-red-500 text-sm font-medium flex items-center gap-1 mt-2">
-                {errors.body.message}
-              </p>
-            )}
+            <p className="text-red-500 text-sm font-medium flex items-center gap-1 mt-2">
+              {errors.body?.message}
+            </p>
+            <span className="text-xs text-gray-400">
+              {watchedBody.length} / {bodyMaxLength}
+            </span>
           </div>
 
           {isEditing && (

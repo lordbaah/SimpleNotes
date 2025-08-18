@@ -16,7 +16,7 @@ const noteSchema = new Schema(
       required: true,
       trim: true,
       minLength: 10,
-      maxLength: 500,
+      maxLength: 1000,
     },
   },
   { timestamps: true }

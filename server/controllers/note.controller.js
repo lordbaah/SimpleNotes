@@ -35,7 +35,7 @@ export const createNote = async (req, res, next) => {
     const checkExistingTitle = await Note.findOne({ title });
 
     if (checkExistingTitle) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
         message: 'Note with this title already exists',
       });
@@ -105,7 +105,7 @@ export const updateNote = async (req, res, next) => {
     const checkExistingTitle = await Note.findOne({ title, _id: { $ne: id } });
 
     if (checkExistingTitle) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
         message: 'Note with this title already exists',
       });
